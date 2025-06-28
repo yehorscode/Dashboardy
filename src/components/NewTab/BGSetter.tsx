@@ -35,7 +35,7 @@ export default function BGSetter() {
     const [imageSize, setImageSize] = useState<string>("Offline");
     const [isOffline, setIsOffline] = useState<boolean>(() => {
         const stored = localStorage.getItem("bgOffline");
-        return stored === null ? true : stored === "true";
+        return stored === null ? false : stored === "true";
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [query, setQuery] = useState<string>(
