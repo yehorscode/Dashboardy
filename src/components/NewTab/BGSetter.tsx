@@ -33,7 +33,7 @@ export default function BGSetter() {
     const [secondColor] = useState(localStorage.getItem("newTabSecondColor"))
     const [bgUrl, setBgUrl] = useState<string | null>(null);
     const [imageSize, setImageSize] = useState<string>("Offline");
-    const [isOffline, setIsOffline] = useState<boolean>(() => {
+    const [isOffline] = useState<boolean>(() => {
         const stored = localStorage.getItem("newTabBgOffline");
         return stored === null ? false : stored === "true";
     });

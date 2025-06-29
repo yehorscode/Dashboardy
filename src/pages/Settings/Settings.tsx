@@ -82,7 +82,6 @@ export default function Settings() {
                     <div>
                         <SettingGroup
                             label="Clock font size"
-                            value={clockFontSize}
                             onChange={handleFontSizeChange}
                             defaultValue={80}
                         >
@@ -92,7 +91,6 @@ export default function Settings() {
                     <div>
                         <SettingGroup
                             label="Clock gap"
-                            value={clockGap}
                             onChange={handleGapChange}
                             defaultValue={10}
                         >
