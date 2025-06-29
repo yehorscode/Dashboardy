@@ -10,7 +10,7 @@ interface SettingGroupProps<T> {
     className?: string;
 }
 
-export function SettingGroup<T>({ label, value, onChange, defaultValue, children, className = "" }: SettingGroupProps<T>) {
+export function SettingGroup<T>({ label, onChange, defaultValue, children, className = "" }: Omit<SettingGroupProps<T>, 'value'>) {
     const handleReset = () => onChange(defaultValue);
     return (
         <div className={`mb-2 ${className}`}>

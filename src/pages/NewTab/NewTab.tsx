@@ -4,7 +4,7 @@ import StorageStarter from "@/components/NewTab/storage-starter"
 import { DndContext, useDraggable } from "@dnd-kit/core";
 import { useState } from "react";
 
-function DraggableTimeBlock({x, y, onDragEnd}: {x: number, y: number, onDragEnd: (x: number, y: number) => void}) {
+function DraggableTimeBlock({x, y}: {x: number, y: number}) {
   const {attributes, listeners, setNodeRef, transform} = useDraggable({id: "time-block"});
   const grid = 40;
   // Pozycja końcowa + aktualny transform podczas drag
@@ -51,7 +51,7 @@ export default function NewTab() {
             <BGSetter/>
             <div className="flex justify-center">
                 <DndContext onDragEnd={handleDragEnd}>
-                  <DraggableTimeBlock x={pos.x} y={pos.y} onDragEnd={handleDragEnd}/>
+                  <DraggableTimeBlock x={pos.x} y={pos.y}/>
                 </DndContext>
             </div>
         </div>

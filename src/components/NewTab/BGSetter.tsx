@@ -38,7 +38,7 @@ export default function BGSetter() {
         return stored === null ? false : stored === "true";
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [query, setQuery] = useState<string>(
+    const [query] = useState<string>(
         localStorage.getItem("imgQuery") || "nature wallpaper"
     );
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -178,15 +178,6 @@ export default function BGSetter() {
                 fetchRandomPhoto(signal); // Retry on image load failure
             }
         };
-    };
-
-    // Toggle offline mode
-    const toggleOffline = () => {
-        setIsOffline((prev) => {
-            const newState = !prev;
-            localStorage.setItem("newTabBgOffline", String(newState));
-            return newState;
-        });
     };
 
     // Handle background image fetching and offline mode
