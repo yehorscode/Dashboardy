@@ -34,7 +34,7 @@ export default function BGSetter() {
     const [bgUrl, setBgUrl] = useState<string | null>(null);
     const [imageSize, setImageSize] = useState<string>("Offline");
     const [isOffline, setIsOffline] = useState<boolean>(() => {
-        const stored = localStorage.getItem("bgOffline");
+        const stored = localStorage.getItem("newTabBgOffline");
         return stored === null ? false : stored === "true";
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -184,7 +184,7 @@ export default function BGSetter() {
     const toggleOffline = () => {
         setIsOffline((prev) => {
             const newState = !prev;
-            localStorage.setItem("bgOffline", String(newState));
+            localStorage.setItem("newTabBgOffline", String(newState));
             return newState;
         });
     };

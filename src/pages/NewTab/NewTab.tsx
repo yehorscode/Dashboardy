@@ -29,7 +29,7 @@ export default function NewTab() {
     // Wczytaj pozycję z localStorage lub domyślnie (0,0)
     const getInitialPos = () => {
       try {
-        const saved = localStorage.getItem("timeBlockPos");
+        const saved = localStorage.getItem("newTabTimeBlockPos");
         if (saved) return JSON.parse(saved);
       } catch {}
       return {x: 0, y: 0};
@@ -42,7 +42,7 @@ export default function NewTab() {
           x: pos.x + Math.round(event.delta.x / grid) * grid,
           y: pos.y + Math.round(event.delta.y / grid) * grid
         };
-        localStorage.setItem("timeBlockPos", JSON.stringify(newPos));
+        localStorage.setItem("newTabTimeBlockPos", JSON.stringify(newPos));
         return newPos;
       });
     }
