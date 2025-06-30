@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import offlineSource from "@/assets/exmpl.jpeg";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { ReactNode } from 'react';
 
 // Define types for Pexels API response
@@ -254,9 +253,9 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
                     </a>
                 </span>
             </div>
-            <button onClick={() => fetchRandomPhoto({ cancelled: false })} className="absolute bottom-2 right-1/2 translate-x-1/2 opacity-80 text-sm text-white">Next image</button>
+            <button onClick={() => fetchRandomPhoto({ cancelled: false })} className="absolute z-10 bottom-2 right-1/2 translate-x-1/2 opacity-80 text-sm text-white">Next image</button>
             {isDebug && (
-                <div className="absolute bottom-3 right-3 opacity-80 text-sm text-white flex flex-col gap-1 z-20 text-right">
+                <div className="hover:cursor-pointer absolute bottom-3 right-3 opacity-80 text-sm text-white flex flex-col gap-1 z-20 text-right">
                     <span>Image Size: {imageSize}</span>
                     <span>Retries: {retryCountRef.current}</span>
                     <span>Second Color: {secondColor}</span>

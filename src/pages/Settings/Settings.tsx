@@ -32,17 +32,6 @@ export default function Settings() {
         return gap ? parseInt(gap, 10) : 10;
     });
 
-    // Weather location state
-    const [weatherLocation, setWeatherLocation] = useState(() => {
-        const raw = localStorage.getItem("newTabWeatherLocation");
-        if (!raw) return null;
-        try {
-            return JSON.parse(raw);
-        } catch {
-            return null;
-        }
-    });
-
     const handleToggle = (
         setValue: React.Dispatch<React.SetStateAction<boolean>>,
         localStorageKey: string
@@ -76,7 +65,6 @@ export default function Settings() {
         localStorage.setItem("newTabBgOffline", "false");
     };
     const handleLocationChange = (value: { lat: string; lon: string; name: string }) => {
-        setWeatherLocation(value);
         localStorage.setItem("newTabWeatherLocation", JSON.stringify(value));
         forceRerender();
     }

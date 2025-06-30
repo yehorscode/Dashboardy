@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface LocationOption {
