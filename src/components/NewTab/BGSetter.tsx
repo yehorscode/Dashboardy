@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import offlineSource from "@/assets/exmpl.jpeg";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { ReactNode } from 'react';
 
 // Define types for Pexels API response
 interface PexelsPhoto {
@@ -28,7 +29,7 @@ interface FetchSignal {
     cancelled: boolean;
 }
 
-export default function BGSetter() {
+export default function BGSetter({ children }: { children?: ReactNode }) {
     const API_KEY = import.meta.env.VITE_APP_PEXELS_API_KEY;
     const [secondColor] = useState(localStorage.getItem("newTabSecondColor"))
     const [bgUrl, setBgUrl] = useState<string | null>(null);
@@ -223,9 +224,9 @@ export default function BGSetter() {
             }
         >
             <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-            {isLoading && (
+            {/* {isLoading && (
                 <Skeleton className="absolute inset-0 w-full h-full z-10" />
-            )}
+            )} */}
             <div className="absolute bottom-3 left-3 opacity-80 text-sm text-white flex flex-col gap-1 z-20">
                 <span>
                     <a
@@ -262,6 +263,7 @@ export default function BGSetter() {
                     <span>Debug Mode: {isDebug ? "ON" : "OFF"}</span>
                 </div>
             )}
+            {children}
         </div>
     );
 }

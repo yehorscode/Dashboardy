@@ -8,6 +8,7 @@ export default function TimeBlock() {
         blue: "#155DFC",
         green: "#00A53E",
         yellow: "#FDC700",
+        default: "#ffffff",
     };
     const [secondColor, setSecondColor] = useState(() => {
         const color = localStorage.getItem("newTabSecondColor") || "none";
@@ -54,10 +55,10 @@ export default function TimeBlock() {
         "#E7000B";
 
     return (
-        <div className="flex-col text-left w-50">
-            <h1 className="text-md">The time is</h1>
+        <div className="flex-col text-left p-4 rounded-md shadow bg-black/20">
+            <h1 className="text-md opacity-70">The time is</h1>
             {clockStyle === "stylish" ? (
-                <div className="flex" style={{ fontSize: fontSize }}>
+                <div className="flex justify-start ml-[-8px]" style={{ fontSize: fontSize }}>
                     <Counter
                         value={time.getHours()}
                         places={[10, 1]}
@@ -86,7 +87,7 @@ export default function TimeBlock() {
                     />
                 </div>
             ) : (
-                <div className="flex" style={{ fontSize: fontSize * 0.6 }}>
+                <div className="flex justify-start" style={{ fontSize: fontSize * 0.7 }}>
                     <span>{formatTwoDigits(time.getHours())}</span>:
                     <span>{formatTwoDigits(time.getMinutes())}</span>:
                     <span className="opacity-80" style={{ color: colorHex }}>

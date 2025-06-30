@@ -1,15 +1,26 @@
-import BGSetter from "@/components/NewTab/BGSetter"
-import TimeBlock from "@/components/Blocks/time-block"
-import StorageStarter from "@/components/NewTab/storage-starter"
 import { DndContext, useDraggable } from "@dnd-kit/core";
-import { useState } from "react";
+import { useCallback } from "react";
+import { useBlocks } from "@/blocks-context";
 
-function DraggableTimeBlock({x, y}: {x: number, y: number}) {
-  const {attributes, listeners, setNodeRef, transform} = useDraggable({id: "time-block"});
-  const grid = 40;
-  // Pozycja końcowa + aktualny transform podczas drag
-  const tx = (transform ? Math.round(transform.x / grid) * grid : 0) + x;
-  const ty = (transform ? Math.round(transform.y / grid) * grid : 0) + y;
+import TimeBlock from "@/components/Blocks/time-block"
+import WeatherBlock from "@/components/Blocks/weather-block";
+import BGSetter from "@/components/NewTab/BGSetter";
+import StorageStarter from "@/components/NewTab/storage-starter"
+
+const BLOCK_TYPES = [
+  { type: "time", label: "Zegar", component: TimeBlock },
+  { type: "weather", label: "Pogoda", component: WeatherBlock },
+] as const;
+
+function DraggableBlock({ id, x, y, children }: { id: string, x: number, y: number, children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const grid = 20;
+  
+  let tx = (transform ? Math.round(transform.x / grid) * grid : 0) + x;
+  let ty = (transform ? Math.round(transform.y / grid) * grid : 0) + y;
+  ty = Math.max(ty, 20);
+  ty = Math.min(ty, window.innerHeight - 20);
+  tx = Math.max(tx, 1);
   const style = { transform: `translate3d(${tx}px, ${ty}px, 0)` };
   return (
     <div
@@ -17,43 +28,54 @@ function DraggableTimeBlock({x, y}: {x: number, y: number}) {
       style={style}
       {...listeners}
       {...attributes}
+      className="absolute"
     >
-      <TimeBlock/>
+      {children}
     </div>
   );
 }
 
 export default function NewTab() {
-    StorageStarter();
-    const grid = 40;
-    // Wczytaj pozycję z localStorage lub domyślnie (0,0)
-    const getInitialPos = () => {
-      try {
-        const saved = localStorage.getItem("newTabTimeBlockPos");
-        if (saved) return JSON.parse(saved);
-      } catch {}
-      return {x: 0, y: 0};
-    };
-    const [pos, setPos] = useState<{x: number, y: number}>(getInitialPos);
-    function handleDragEnd(event: any) {
-      if (!event.delta) return;
-      setPos(pos => {
-        const newPos = {
-          x: pos.x + Math.round(event.delta.x / grid) * grid,
-          y: pos.y + Math.round(event.delta.y / grid) * grid
-        };
-        localStorage.setItem("newTabTimeBlockPos", JSON.stringify(newPos));
-        return newPos;
+  StorageStarter();
+  const { blocks, setBlocks } = useBlocks();
+
+  // isCollision musi przyjmować listę bloków jako argument,
+  // żeby działała poprawnie w funkcji aktualizującej setBlocks
+  function isCollision(blocksArr: typeof blocks, newX: number, newY: number, id: string) {
+    return blocksArr.some(b => b.id !== id && b.x === newX && b.y === newY && b.visible);
+  }
+
+  const handleDragEnd = useCallback((event: any) => {
+    if (!event.active || !event.delta) return;
+    const id = event.active.id as string;
+    setBlocks((prevBlocks) => {
+      return prevBlocks.map((b) => {
+        if (b.id !== id) return b;
+        const newX = b.x + Math.round(event.delta.x / 40) * 40;
+        let newY = b.y + Math.round(event.delta.y / 40) * 40;
+        newY = Math.max(newY, 20);
+        // Sprawdzamy kolizję na podstawie nowej listy bloków
+        if (isCollision(prevBlocks, newX, newY, id)) return b;
+        return { ...b, x: newX, y: newY };
       });
-    }
-    return (
-        <div className="h-full">
-            <BGSetter/>
-            <div className="flex justify-center">
-                <DndContext onDragEnd={handleDragEnd}>
-                  <DraggableTimeBlock x={pos.x} y={pos.y}/>
-                </DndContext>
-            </div>
-        </div>
-    )
+    });
+  }, [setBlocks]);
+
+  return (
+    <BGSetter>
+      <div className="h-full relative">
+        <DndContext onDragEnd={handleDragEnd}>
+          {blocks.filter((b) => b.visible).map((b) => {
+            const BlockComp = BLOCK_TYPES.find(bt => bt.type === b.type)?.component;
+            if (!BlockComp) return null;
+            return (
+              <DraggableBlock key={b.id} id={b.id} x={b.x} y={b.y}>
+                <BlockComp />
+              </DraggableBlock>
+            );
+          })}
+        </DndContext>
+      </div>
+    </BGSetter>
+  );
 }

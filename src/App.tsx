@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import Layout from "./components/Layout";
 import NewTab from "./pages/NewTab/NewTab";
 import Settings from "./pages/Settings/Settings";
+import { BlocksProvider } from "@/blocks-context";
 
 function App() {
     return (
@@ -12,7 +13,11 @@ function App() {
             <Toaster />
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Layout />}>
+                    <Route path="/" element={
+                        <BlocksProvider>
+                            <Layout />
+                        </BlocksProvider>
+                    }>
                         <Route index element={<NewTab />} />
                         <Route path="/settings" element={<Settings />} />
                     </Route>
