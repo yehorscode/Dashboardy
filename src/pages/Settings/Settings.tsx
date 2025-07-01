@@ -419,6 +419,7 @@ export default function Settings() {
                             <option value="calendar">Calendar</option>
                             <option value="tips">Tips</option>
                             <option value="funimgs">FunIMGS</option>
+                            <option value="uselessfact">Useless Facts</option>
                         </select>
                     </div>
                     <button

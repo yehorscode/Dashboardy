@@ -7,6 +7,7 @@ import WeatherBlock from "@/components/Blocks/weather-block";
 import CalendarBlock from "@/components/Blocks/calendar-block";
 import TipsBlock from "@/components/Blocks/tips-block";
 import FunIMGSBlock from "@/components/Blocks/funimgs-block";
+import UselessFactBlock from "@/components/Blocks/uselessfact-block";
 import BGSetter from "@/components/NewTab/BGSetter";
 
 const BLOCK_TYPES = [
@@ -15,6 +16,7 @@ const BLOCK_TYPES = [
     { type: "calendar", label: "Calendar", component: CalendarBlock },
     { type: "tips", label: "Tips", component: TipsBlock },
     { type: "funimgs", label: "FunIMGS", component: FunIMGSBlock },
+    { type: "uselessfact", label: "Useless Fact", component: UselessFactBlock },
 ] as const;
 
 function DraggableBlock({
