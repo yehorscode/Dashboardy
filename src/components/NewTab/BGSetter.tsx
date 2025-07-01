@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import offlineSource from "@/assets/exmpl.jpeg";
 import type { ReactNode } from 'react';
 
-// Define types for Pexels API response
+
 interface PexelsPhoto {
     id: number;
     src: {
@@ -50,7 +50,7 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
     const [responseData, setResponseData] = useState<PexelsPhoto | null>(null);
     const [isDebug] = useState(localStorage.getItem("debug") === "true");
 
-    // Fetch random photo from Pexels
+    
     const fetchRandomPhoto = async (signal: FetchSignal) => {
         if (retryCountRef.current >= MAX_RETRIES) {
             setIsLoading(false);
@@ -82,11 +82,11 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
                 !photo.src?.original
             ) {
                 retryCountRef.current += 1;
-                fetchRandomPhoto(signal); // Retry if no valid photo
+                fetchRandomPhoto(signal); 
                 return;
             }
             if (!signal.cancelled) {
-                // Preload tiny image to ensure it displays
+                
                 preloadTinyImage(
                     photo.src.tiny,
                     photo.src.medium,
@@ -98,12 +98,12 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
             console.error("Failed to fetch photo:", error);
             if (!signal.cancelled) {
                 retryCountRef.current += 1;
-                fetchRandomPhoto(signal); // Retry on error
+                fetchRandomPhoto(signal); 
             }
         }
     };
 
-    // Preload tiny image and set it first
+    
     const preloadTinyImage = (
         tinyUrl: string,
         mediumUrl: string,
@@ -118,7 +118,7 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
                 setBgUrl(tinyUrl);
                 setImageSize("Tiny");
                 setIsLoading(false);
-                // Start loading medium image after tiny is displayed
+                
                 preloadMediumImage(mediumUrl, originalUrl, signal);
             }
         };
@@ -127,12 +127,12 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
             if (!signal.cancelled) {
                 setIsLoading(false);
                 retryCountRef.current += 1;
-                fetchRandomPhoto(signal); // Retry on image load failure
+                fetchRandomPhoto(signal); 
             }
         };
     };
 
-    // Preload medium image and swap when ready
+    
     const preloadMediumImage = (
         mediumUrl: string,
         originalUrl: string,
@@ -145,7 +145,7 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
             if (!signal.cancelled) {
                 setBgUrl(mediumUrl);
                 setImageSize("Medium");
-                // Start loading high-res image after medium is displayed
+                
                 preloadHighResImage(originalUrl, signal);
             }
         };
@@ -154,33 +154,33 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
             if (!signal.cancelled) {
                 setIsLoading(false);
                 retryCountRef.current += 1;
-                fetchRandomPhoto(signal); // Retry on image load failure
+                fetchRandomPhoto(signal); 
             }
         };
     };
 
-    // Preload high-resolution image and swap when ready
+    
     const preloadHighResImage = (url: string, signal: FetchSignal) => {
         highResImageRef.current = new Image();
         highResImageRef.current.src = url;
 
         highResImageRef.current.onload = () => {
             if (!signal.cancelled) {
-                setBgUrl(url); // Swap to high-res image
+                setBgUrl(url); 
                 setImageSize("Original");
-                retryCountRef.current = 0; // Reset retry count on success
+                retryCountRef.current = 0; 
             }
         };
 
         highResImageRef.current.onerror = () => {
             if (!signal.cancelled) {
                 retryCountRef.current += 1;
-                fetchRandomPhoto(signal); // Retry on image load failure
+                fetchRandomPhoto(signal); 
             }
         };
     };
 
-    // Handle background image fetching and offline mode
+    
     useEffect(() => {
         if (isOffline) {
             setBgUrl(offlineSource);
@@ -191,14 +191,14 @@ export default function BGSetter({ children }: { children?: ReactNode }) {
 
         const signal: FetchSignal = { cancelled: false };
         setIsLoading(true);
-        retryCountRef.current = 0; // Reset retries for new fetch
+        retryCountRef.current = 0; 
 
-        // Debounce API call
+        
         debounceRef.current = setTimeout(() => {
             fetchRandomPhoto(signal);
         }, 1000);
 
-        // Cleanup
+        
         return () => {
             signal.cancelled = true;
             if (debounceRef.current) {

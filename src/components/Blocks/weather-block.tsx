@@ -1,31 +1,19 @@
 import {
     Sun,
     Cloud,
-    // Moon,
     CloudDrizzle,
     CloudFog,
     CloudLightning,
-    // CloudMoon,
-    // CloudMoonRain,
     CloudRain,
-    // CloudRainWind,
     CloudSnow,
     CloudSun,
-    // CloudSunRain,
     Cloudy,
-    // Droplet,
-    // Droplets,
     Sunrise,
     Sunset,
-    // Thermometer,
-    // Tornado,
     Wind,
-    // Rainbow,
-    // Star,
 } from "lucide-react";
 import { useEffect, useState, type JSX } from "react";
 
-// Define interfaces for type safety
 interface Coordinates {
     lat: string;
     lon: string;
@@ -43,27 +31,25 @@ interface WeatherData {
     icon: JSX.Element;
 }
 
-// Weather code to Lucide icon mapping
 const weatherCodeToIcon: { [key: number]: JSX.Element } = {
-    0: <Sun size={80} />, // Clear sky
-    1: <CloudSun size={80} />, // Mainly clear
-    2: <Cloudy size={80} />, // Partly cloudy
-    3: <Cloud size={80} />, // Overcast
-    45: <CloudFog size={80} />, // Fog
-    48: <CloudFog size={80} />, // Depositing rime fog
-    51: <CloudDrizzle size={80} />, // Light drizzle
-    53: <CloudDrizzle size={80} />, // Moderate drizzle
-    55: <CloudDrizzle size={80} />, // Dense drizzle
-    61: <CloudRain size={80} />, // Light rain
-    63: <CloudRain size={80} />, // Moderate rain
-    65: <CloudRain size={80} />, // Heavy rain
-    71: <CloudSnow size={80} />, // Light snow
-    73: <CloudSnow size={80} />, // Moderate snow
-    75: <CloudSnow size={80} />, // Heavy snow
-    95: <CloudLightning size={80} />, // Thunderstorm
+    0: <Sun size={80} />,
+    1: <CloudSun size={80} />,
+    2: <Cloudy size={80} />,
+    3: <Cloud size={80} />,
+    45: <CloudFog size={80} />,
+    48: <CloudFog size={80} />,
+    51: <CloudDrizzle size={80} />,
+    53: <CloudDrizzle size={80} />,
+    55: <CloudDrizzle size={80} />,
+    61: <CloudRain size={80} />,
+    63: <CloudRain size={80} />,
+    65: <CloudRain size={80} />,
+    71: <CloudSnow size={80} />,
+    73: <CloudSnow size={80} />,
+    75: <CloudSnow size={80} />,
+    95: <CloudLightning size={80} />,
 };
 
-// Weather code to description mapping
 const weatherCodeToDescription: { [key: number]: string } = {
     0: "Clear sky",
     1: "Mainly clear",
@@ -83,6 +69,25 @@ const weatherCodeToDescription: { [key: number]: string } = {
     95: "Thunderstorm",
 };
 
+const weatherCodeToGradient: { [key: number]: string } = {
+    0: "from-cyan-400/100 to-blue-400/100",
+    1: "from-cyan-400/100 to-blue-400/100",
+    2: "from-cyan-500/100 to-sky-600/100",
+    3: "from-cyan-500/100 to-sky-700/100",
+    45: "from-sky-600/100 to-sky-800/100",
+    48: "from-sky-600/100 to-sky-900/100",
+    51: "from-sky-700/100 to-blue-800/100",
+    53: "from-sky-700/100 to-blue-900/100",
+    55: "from-sky-700/100 to-blue-900/100",
+    61: "from-sky-600/100 to-sky-700/100",
+    63: "from-sky-800/100 to-sky-800/100",
+    65: "from-sky-900/100 to-sky-950/100",
+    71: "from-cyan-600/100 to-cyan-700/100",
+    73: "from-cyan-700/100 to-cyan-800/100",
+    75: "from-cyan-800/100 to-cyan-900/100",
+    95: "from-blue-950/100 to-sky-950/100",
+};
+
 export default function WeatherBlock() {
     const [location] = useState<string>(
         localStorage.getItem("newTabWeatherLocation") || "please set location"
@@ -90,6 +95,9 @@ export default function WeatherBlock() {
     const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
     const [weather, setWeather] = useState<WeatherData | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [demoMode] = useState(false); // demo mode flag
+    const weatherCodes = Object.keys(weatherCodeToGradient).map(Number);
+    const [demoIndex, setDemoIndex] = useState(0);
 
     function getLocation() {
         try {
@@ -142,6 +150,26 @@ export default function WeatherBlock() {
         }
     }, [coordinates]);
 
+    // useEffect(() => {
+    //     if (weather && demoMode) {
+    //         if (demoIndex < weatherCodes.length) {
+    //             const timer = setTimeout(() => {
+    //                 setWeather(w => w && { ...w, weatherCode: weatherCodes[demoIndex] });
+    //                 setDemoIndex(i => i + 1);
+    //             }, 800); // zmiana co 0.8s
+    //             return () => clearTimeout(timer);
+    //         } else {
+    //             setDemoMode(false); // zakończ demo
+    //         }
+    //     }
+    // }, [weather, demoMode, demoIndex]);
+
+    const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const idx = Number(e.target.value);
+        setDemoIndex(idx);
+        setWeather((w) => w && { ...w, weatherCode: weatherCodes[idx] });
+    };
+
     if (error) {
         return <div className="text-red-500">{error}</div>;
     }
@@ -150,11 +178,32 @@ export default function WeatherBlock() {
         return <div>Loading weather...</div>;
     }
 
+    const gradientClass =
+        weatherCodeToGradient[weather.weatherCode] ||
+        "from-cyan-500/100 to-blue-500/100";
+
     return (
-        <div className="flex-col text-left p-4 rounded-md shadow bg-blue-700/20">
-            {/* <h1 className="text-xl font-bold">
-                Weather in {JSON.parse(location).name.split(",")[0]}
-            </h1> */}
+        <div
+            className={`flex-col text-left p-4 rounded-md shadow bg-gradient-to-br ${gradientClass}`}
+        >
+            {demoMode && (
+                <>
+                    <div className="text-xs text-white mb-2">
+                        DEMO: {weather.weatherCode}
+                    </div>
+                    <div className="mb-2">
+                        {weatherCodeToIcon[weather.weatherCode]}
+                    </div>
+                    <input
+                        type="range"
+                        min={0}
+                        max={weatherCodes.length - 1}
+                        value={demoIndex}
+                        onChange={handleSliderChange}
+                        className="w-full mb-2 accent-cyan-500"
+                    />
+                </>
+            )}
             <div className="flex-col items-center gap-4">
                 <div className="mb-1">{weather.icon}</div>
                 <div className="flex gap-3">
@@ -163,12 +212,14 @@ export default function WeatherBlock() {
                             Feels like: {weather.apparentTemperature}°C
                         </p>
                         <p>{weather.weatherDescription}</p>
-                        
+
                         <p className="flex">
                             <Wind className="mr-1" />
                             Wind Speed: {weather.windSpeed} km/h
                         </p>
-                        <p className="text-sm opacity-80">Humidity: {weather.humidity}%</p>
+                        <p className="text-sm opacity-80">
+                            Humidity: {weather.humidity}%
+                        </p>
                     </div>
                     <div className="">
                         <p className="text-sm">

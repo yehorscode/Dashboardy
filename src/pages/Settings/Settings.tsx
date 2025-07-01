@@ -31,6 +31,14 @@ export default function Settings() {
         const gap = localStorage.getItem("newTabClockGap");
         return gap ? parseInt(gap, 10) : 10;
     });
+    
+    const [newTabCalendarColor, setCalendarColor] = useState(() => {
+        
+        const stored = localStorage.getItem("newTabCalendarColor");
+        if (stored) return stored;
+        localStorage.setItem("newTabCalendarColor", "#fca5a5");
+        return "#fca5a5";
+    });
 
     const handleToggle = (
         setValue: React.Dispatch<React.SetStateAction<boolean>>,
@@ -49,6 +57,11 @@ export default function Settings() {
     const handleGapChange = (value: number) => {
         setClockGap(value);
         localStorage.setItem("newTabClockGap", value.toString());
+    };
+    const handleCalendarColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCalendarColor(e.target.value);
+        localStorage.setItem("newTabCalendarColor", e.target.value);
+        forceRerender();
     };
 
     const resetClockSecondColor = () => {
@@ -133,6 +146,19 @@ export default function Settings() {
                             <ChangeLocation  onChange={handleLocationChange} />
                         </SettingGroup>
                     </div>
+                    <div>
+                        <SettingGroup
+                            label="Calendar color"
+                            onChange={handleCalendarColorChange}
+                        >
+                            <input
+                                type="color"
+                                value={newTabCalendarColor}
+                                onChange={handleCalendarColorChange}
+                                style={{ width: 40, height: 30, border: 'none', background: 'none' }}
+                            />
+                        </SettingGroup>
+                    </div>
                 </div>
             </div>
             <div className="mt-4 flex-col flex justify-center items-center gap-1">
@@ -149,8 +175,9 @@ export default function Settings() {
                     <label className="mr-2">Dodaj blok:</label>
                     <select id="add-block-type" className="bg-[#66ff66] text-black p-1 rounded" onChange={e => { if (e.target.value) { addBlock(e.target.value as any); e.target.value = ""; } }}>
                       <option value="" className="">Choose which one</option>
-                      <option value="time">Zegar</option>
-                      <option value="weather">Pogoda</option>
+                      <option value="time">Clock</option>
+                      <option value="weather">Weather</option>
+                      <option value="calendar">Calendar</option>
                     </select>
                   </div>
                   <button className="mt-2 text-xs underline" onClick={resetBlocks}>Przywróć domyślne bloki</button>

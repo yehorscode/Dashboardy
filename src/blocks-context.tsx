@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-export type BlockType = "time" | "weather";
+export type BlockType = "time" | "weather" | "calendar";
 
 export interface Block {
   id: string;
@@ -24,6 +24,7 @@ const BlocksContext = createContext<BlocksContextType | undefined>(undefined);
 const BLOCKS_START: Block[] = [
   { id: "block-1", type: "time", x: -100, y: 0, visible: true },
   { id: "block-2", type: "weather", x: 100, y: 0, visible: true },
+  { id: "block-3", type: "calendar", x: 0, y: 0, visible: true },
 ];
 
 export function BlocksProvider({ children }: { children: React.ReactNode }) {
