@@ -21,7 +21,7 @@ export default function Calendar01() {
   const isGradient = (val: string) => val.startsWith("linear-gradient") || val.startsWith("radial-gradient");
 
   const changeGradientDirection = (gradient: string) => {
-    return gradient.replace(/(\d+)deg/, (match, p1) => `${(parseInt(p1) + 200) % 360}deg`);
+    return gradient.replace(/(\d+)deg/, (p1) => `${(parseInt(p1) + 200) % 360}deg`);
   };
 
   return (
