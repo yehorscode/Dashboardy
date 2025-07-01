@@ -1,17 +1,18 @@
 import { DndContext, useDraggable } from "@dnd-kit/core";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useBlocks } from "@/blocks-context";
 
 import TimeBlock from "@/components/Blocks/time-block";
 import WeatherBlock from "@/components/Blocks/weather-block";
 import CalendarBlock from "@/components/Blocks/calendar-block";
+import TipsBlock from "@/components/Blocks/tips-block";
 import BGSetter from "@/components/NewTab/BGSetter";
-import StorageStarter from "@/components/NewTab/storage-starter";
 
 const BLOCK_TYPES = [
     { type: "time", label: "Clock", component: TimeBlock },
     { type: "weather", label: "Weather", component: WeatherBlock },
     { type: "calendar", label: "Calendar", component: CalendarBlock },
+    { type: "tips", label: "Tips", component: TipsBlock },
 ] as const;
 
 function DraggableBlock({
@@ -50,8 +51,65 @@ function DraggableBlock({
 }
 
 export default function NewTab() {
-    StorageStarter();
     const { blocks, setBlocks } = useBlocks();
+    useEffect(() => {
+        // Session storage
+        if (
+            sessionStorage.getItem("__darkreader__wasEnabledForHost") === null
+        ) {
+            sessionStorage.setItem("__darkreader__wasEnabledForHost", "false");
+        }
+        // Local storage
+        if (localStorage.getItem("debug") === null) {
+            localStorage.setItem("debug", "false");
+        }
+        if (localStorage.getItem("newTabClockStyle") === null) {
+            localStorage.setItem("newTabClockStyle", "stylish");
+        }
+        if (localStorage.getItem("newTabBgOffline") === null) {
+            localStorage.setItem("newTabBgOffline", "false");
+        }
+        if (localStorage.getItem("newTabClockGap") === null) {
+            localStorage.setItem("newTabClockGap", "10");
+        }
+        let blocksJustSet = false;
+        if (localStorage.getItem("newTabBlocks") === null) {
+            localStorage.setItem(
+                "newTabBlocks",
+                '[\n {\n  "id": "block-1",\n  "type": "time",\n  "x": 860,\n  "y": 320,\n  "visible": true\n },\n {\n  "id": "block-2",\n  "type": "weather",\n  "x": 340,\n  "y": 120,\n  "visible": true\n },\n {\n  "id": "block-3",\n  "type": "calendar",\n  "x": 320,\n  "y": 480,\n  "visible": true\n },\n {\n  "id": "block-4",\n  "type": "tips",\n  "x": 1040,\n  "y": 680,\n  "visible": true\n }\n]'
+            );
+            blocksJustSet = true;
+        }
+        if (localStorage.getItem("newTabWeatherLocation") === null) {
+            localStorage.setItem(
+                "newTabWeatherLocation",
+                '{\n "lat": "52.2319581",\n "lon": "21.0067249",\n "name": "Warszawa, województwo mazowieckie, Polska"\n}'
+            );
+        }
+        if (localStorage.getItem("newTabClockFontSize") === null) {
+            localStorage.setItem("newTabClockFontSize", "80");
+        }
+        if (localStorage.getItem("newTabSecondColor") === null) {
+            localStorage.setItem("newTabSecondColor", "green");
+        }
+        if (localStorage.getItem("newTabCalendarColor") === null) {
+            localStorage.setItem(
+                "newTabCalendarColor",
+                "linear-gradient(90deg, #a51d2d, #c01c28)"
+            );
+        }
+        // Wymuś synchronizację bloków z localStorage jeśli zostały właśnie ustawione
+        if (blocksJustSet) {
+            try {
+                const blocksFromStorage = JSON.parse(
+                    localStorage.getItem("newTabBlocks") || "[]"
+                );
+                if (Array.isArray(blocksFromStorage)) {
+                    setBlocks(blocksFromStorage);
+                }
+            } catch {}
+        }
+    }, [setBlocks]);
 
     function isCollision(
         blocksArr: typeof blocks,
@@ -85,28 +143,26 @@ export default function NewTab() {
 
     return (
         <BGSetter>
-            <div className="h-full relative">
-                <DndContext onDragEnd={handleDragEnd}>
-                    {blocks
-                        .filter((b) => b.visible)
-                        .map((b) => {
-                            const BlockComp = BLOCK_TYPES.find(
-                                (bt) => bt.type === b.type
-                            )?.component;
-                            if (!BlockComp) return null;
-                            return (
-                                <DraggableBlock
-                                    key={b.id}
-                                    id={b.id}
-                                    x={b.x}
-                                    y={b.y}
-                                >
-                                    <BlockComp />
-                                </DraggableBlock>
-                            );
-                        })}
-                </DndContext>
-            </div>
+            <DndContext onDragEnd={handleDragEnd}>
+                <div className="relative h-screen overflow-hidden">
+                    {blocks.map((block) => {
+                        const BlockComponent = BLOCK_TYPES.find(
+                            (b) => b.type === block.type
+                        )?.component;
+                        if (!BlockComponent || !block.visible) return null;
+                        return (
+                            <DraggableBlock
+                                key={block.id}
+                                id={block.id}
+                                x={block.x}
+                                y={block.y}
+                            >
+                                <BlockComponent />
+                            </DraggableBlock>
+                        );
+                    })}
+                </div>
+            </DndContext>
         </BGSetter>
     );
 }

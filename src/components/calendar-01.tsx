@@ -17,6 +17,12 @@ export default function Calendar01() {
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
   }, []);
+  // Helper: check if value is a gradient
+  const isGradient = (val: string) => val.startsWith("linear-gradient") || val.startsWith("radial-gradient");
+
+  const changeGradientDirection = (gradient: string) => {
+    return gradient.replace(/(\d+)deg/, (match, p1) => `${(parseInt(p1) + 200) % 360}deg`);
+  };
 
   return (
     <Calendar
@@ -24,8 +30,10 @@ export default function Calendar01() {
       defaultMonth={date}
       selected={date}
       onSelect={setDate}
-      className="rounded-lg border shadow-sm border-input"
-      style={{ backgroundColor: newTabCalendarColor }}
+      className="rounded-md shadow-sm border-black/20 p-4"
+      style={isGradient(newTabCalendarColor)
+        ? { background: changeGradientDirection(newTabCalendarColor) }
+        : { backgroundColor: newTabCalendarColor }}
     />
   )
 }

@@ -32,12 +32,28 @@ export default function Settings() {
         return gap ? parseInt(gap, 10) : 10;
     });
     
-    const [newTabCalendarColor, setCalendarColor] = useState(() => {
-        
+    // Now two colors for gradient
+    const [calendarColor1, setCalendarColor1] = useState(() => {
         const stored = localStorage.getItem("newTabCalendarColor");
-        if (stored) return stored;
-        localStorage.setItem("newTabCalendarColor", "#fca5a5");
-        return "#fca5a5";
+        if (!stored) return "#fca5a5";
+        if (stored.startsWith("linear-gradient")) {
+            const match = stored.match(/linear-gradient\([^,]+,\s*([^,]+),/);
+            return match ? match[1].trim() : "#fca5a5";
+        }
+        return stored;
+    });
+    const [calendarColor2, setCalendarColor2] = useState(() => {
+        const stored = localStorage.getItem("newTabCalendarColor");
+        if (!stored) return "#66ff66";
+        if (stored.startsWith("linear-gradient")) {
+            const match = stored.match(/linear-gradient\([^,]+,\s*[^,]+,\s*([^\)]+)\)/);
+            return match ? match[1].trim() : "#66ff66";
+        }
+        return "#66ff66";
+    });
+    const [useGradient, setUseGradient] = useState(() => {
+        const stored = localStorage.getItem("newTabCalendarColor");
+        return stored ? stored.startsWith("linear-gradient") : false;
     });
 
     const handleToggle = (
@@ -58,12 +74,37 @@ export default function Settings() {
         setClockGap(value);
         localStorage.setItem("newTabClockGap", value.toString());
     };
-    const handleCalendarColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCalendarColor(e.target.value);
-        localStorage.setItem("newTabCalendarColor", e.target.value);
+    const handleCalendarColor1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newColor1 = e.target.value;
+        setCalendarColor1(newColor1);
+        if (useGradient) {
+            const gradient = `linear-gradient(90deg, ${newColor1}, ${calendarColor2})`;
+            localStorage.setItem("newTabCalendarColor", gradient);
+        } else {
+            localStorage.setItem("newTabCalendarColor", newColor1);
+        }
         forceRerender();
     };
-
+    const handleCalendarColor2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newColor2 = e.target.value;
+        setCalendarColor2(newColor2);
+        if (useGradient) {
+            const gradient = `linear-gradient(90deg, ${calendarColor1}, ${newColor2})`;
+            localStorage.setItem("newTabCalendarColor", gradient);
+        }
+        forceRerender();
+    };
+    const handleUseGradientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const checked = e.target.checked;
+        setUseGradient(checked);
+        if (checked) {
+            const gradient = `linear-gradient(90deg, ${calendarColor1}, ${calendarColor2})`;
+            localStorage.setItem("newTabCalendarColor", gradient);
+        } else {
+            localStorage.setItem("newTabCalendarColor", calendarColor1);
+        }
+        forceRerender();
+    };
     const resetClockSecondColor = () => {
         localStorage.setItem("newTabSecondColor", "default");
         
@@ -149,14 +190,35 @@ export default function Settings() {
                     <div>
                         <SettingGroup
                             label="Calendar color"
-                            onChange={handleCalendarColorChange}
+                            onChange={() => {}}
                         >
-                            <input
-                                type="color"
-                                value={newTabCalendarColor}
-                                onChange={handleCalendarColorChange}
-                                style={{ width: 40, height: 30, border: 'none', background: 'none' }}
-                            />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <input
+                                    type="color"
+                                    value={calendarColor1}
+                                    onChange={handleCalendarColor1Change}
+                                    style={{ width: 40, height: 30, border: 'none', background: 'none' }}
+                                />
+                                {useGradient && (
+                                    <>
+                                        <span>→</span>
+                                        <input
+                                            type="color"
+                                            value={calendarColor2}
+                                            onChange={handleCalendarColor2Change}
+                                            style={{ width: 40, height: 30, border: 'none', background: 'none' }}
+                                        />
+                                    </>
+                                )}
+                                <label style={{ marginLeft: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={useGradient}
+                                        onChange={handleUseGradientChange}
+                                    />
+                                    Gradient
+                                </label>
+                            </div>
                         </SettingGroup>
                     </div>
                 </div>
@@ -178,6 +240,7 @@ export default function Settings() {
                       <option value="time">Clock</option>
                       <option value="weather">Weather</option>
                       <option value="calendar">Calendar</option>
+                      <option value="tips">Tips</option>
                     </select>
                   </div>
                   <button className="mt-2 text-xs underline" onClick={resetBlocks}>Przywróć domyślne bloki</button>

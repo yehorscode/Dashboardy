@@ -54,8 +54,21 @@ export default function TimeBlock() {
         correctedColours[secondColor as keyof typeof correctedColours] ||
         "#E7000B";
 
+    function hexToRgba(hex: string, alpha: number): string {
+        let c = hex.replace('#', '');
+        if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+        const num = parseInt(c, 16);
+        return `rgba(${(num >> 16) & 255},${(num >> 8) & 255},${num & 255},${alpha})`;
+    }
+    const colorRgba = hexToRgba(colorHex, 0.4);
+
     return (
-        <div className="flex-col text-left p-4 rounded-md shadow bg-black/20">
+        <div
+            className="flex flex-col text-left p-4 rounded-md shadow"
+            style={{
+                background: `linear-gradient(to bottom right, rgba(255,255,255,0), ${colorRgba}), black`
+            }}
+        >
             <h1 className="text-md opacity-70">The time is</h1>
             {clockStyle === "stylish" ? (
                 <div className="flex justify-start ml-[-8px]" style={{ fontSize: fontSize }}>
@@ -83,7 +96,7 @@ export default function TimeBlock() {
                         fontSize={fontSize}
                         padding={5}
                         gap={gap}
-                        textColor={secondColor}
+                        textColor={colorHex}
                     />
                 </div>
             ) : (
