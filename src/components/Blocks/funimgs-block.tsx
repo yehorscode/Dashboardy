@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 export default function FunIMGSBlock() {
-    const [type, setType] = useState(
+    const [type] = useState(
         (localStorage.getItem("newTabFunIMGSType") === "dog" ||
             localStorage.getItem("newTabFunIMGSType") === "cat"
             ? localStorage.getItem("newTabFunIMGSType")
