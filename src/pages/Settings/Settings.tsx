@@ -62,6 +62,10 @@ export default function Settings() {
         const parsed = stored ? parseInt(stored, 10) : 10;
         return isNaN(parsed) ? 10 : Math.max(0, Math.min(50, parsed));
     });
+    const [funimgsType, setFunimgsType] = useState(() => {
+        const stored = localStorage.getItem("newTabFunIMGSType");
+        return stored === "cat" || stored === "dog" ? stored : "dog";
+    });
 
     const handleToggle = (
         setValue: React.Dispatch<React.SetStateAction<boolean>>,
@@ -143,6 +147,11 @@ export default function Settings() {
         const clamped = Math.max(0, Math.min(50, value));
         setGridValue(clamped);
         localStorage.setItem("newTabGrid", clamped.toString());
+        forceRerender();
+    };
+    const handleFunimgsTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFunimgsType(e.target.value);
+        localStorage.setItem("newTabFunIMGSType", e.target.value);
         forceRerender();
     };
 
@@ -344,6 +353,31 @@ export default function Settings() {
                             </div>
                         </SettingGroup>
                     </div>
+                    <div className="mt-4 flex-col flex justify-center items-center gap-1">
+                        <h4 className="font-mono text-2xl mb-2 mt-5">FunIMGS type</h4>
+                        <div className="flex gap-4 mb-4">
+                            <label className="flex items-center gap-1">
+                                <input
+                                    type="radio"
+                                    name="funimgs-type"
+                                    value="dog"
+                                    checked={funimgsType === "dog"}
+                                    onChange={handleFunimgsTypeChange}
+                                />
+                                Dog
+                            </label>
+                            <label className="flex items-center gap-1">
+                                <input
+                                    type="radio"
+                                    name="funimgs-type"
+                                    value="cat"
+                                    checked={funimgsType === "cat"}
+                                    onChange={handleFunimgsTypeChange}
+                                />
+                                Cat
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="mt-4 flex-col flex justify-center items-center gap-1">
@@ -384,6 +418,7 @@ export default function Settings() {
                             <option value="weather">Weather</option>
                             <option value="calendar">Calendar</option>
                             <option value="tips">Tips</option>
+                            <option value="funimgs">FunIMGS</option>
                         </select>
                     </div>
                     <button

@@ -6,6 +6,7 @@ import TimeBlock from "@/components/Blocks/time-block";
 import WeatherBlock from "@/components/Blocks/weather-block";
 import CalendarBlock from "@/components/Blocks/calendar-block";
 import TipsBlock from "@/components/Blocks/tips-block";
+import FunIMGSBlock from "@/components/Blocks/funimgs-block";
 import BGSetter from "@/components/NewTab/BGSetter";
 
 const BLOCK_TYPES = [
@@ -13,6 +14,7 @@ const BLOCK_TYPES = [
     { type: "weather", label: "Weather", component: WeatherBlock },
     { type: "calendar", label: "Calendar", component: CalendarBlock },
     { type: "tips", label: "Tips", component: TipsBlock },
+    { type: "funimgs", label: "FunIMGS", component: FunIMGSBlock },
 ] as const;
 
 function DraggableBlock({
@@ -105,6 +107,9 @@ export default function NewTab() {
         }
         if (localStorage.getItem("newTabGrid") === null) {
             localStorage.setItem("newTabGrid", "20")
+        }
+        if (localStorage.getItem("newTabFunIMGSType") === null) {
+            localStorage.setItem("newTabFunIMGSType", "cat");
         }
         
         if (blocksJustSet) {
