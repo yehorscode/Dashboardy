@@ -1,5 +1,5 @@
 import { DndContext, useDraggable } from "@dnd-kit/core";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useBlocks } from "@/blocks-context";
 
 import TimeBlock from "@/components/Blocks/time-block";
@@ -19,17 +19,18 @@ function DraggableBlock({
     id,
     x,
     y,
+    grid,
     children,
 }: {
     id: string;
     x: number;
     y: number;
+    grid: number;
     children: React.ReactNode;
 }) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id,
     });
-    const grid = 20;
 
     let tx = (transform ? Math.round(transform.x / grid) * grid : 0) + x;
     let ty = (transform ? Math.round(transform.y / grid) * grid : 0) + y;
@@ -52,14 +53,18 @@ function DraggableBlock({
 
 export default function NewTab() {
     const { blocks, setBlocks } = useBlocks();
+    const [grid, setGrid] = useState<number>(() => {
+        const stored = localStorage.getItem("newTabGrid");
+        return stored ? Number(stored) : 20;
+    });
     useEffect(() => {
-        // Session storage
+        
         if (
             sessionStorage.getItem("__darkreader__wasEnabledForHost") === null
         ) {
             sessionStorage.setItem("__darkreader__wasEnabledForHost", "false");
         }
-        // Local storage
+        
         if (localStorage.getItem("debug") === null) {
             localStorage.setItem("debug", "false");
         }
@@ -98,7 +103,10 @@ export default function NewTab() {
                 "linear-gradient(90deg, #a51d2d, #c01c28)"
             );
         }
-        // Wymuś synchronizację bloków z localStorage jeśli zostały właśnie ustawione
+        if (localStorage.getItem("newTabGrid") === null) {
+            localStorage.setItem("newTabGrid", "20")
+        }
+        
         if (blocksJustSet) {
             try {
                 const blocksFromStorage = JSON.parse(
@@ -109,6 +117,14 @@ export default function NewTab() {
                 }
             } catch {}
         }
+        
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === "newTabGrid") {
+                setGrid(e.newValue ? Number(e.newValue) : 20);
+            }
+        };
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
     }, [setBlocks]);
 
     function isCollision(
@@ -129,8 +145,8 @@ export default function NewTab() {
             setBlocks((prevBlocks) => {
                 return prevBlocks.map((b) => {
                     if (b.id !== id) return b;
-                    const newX = b.x + Math.round(event.delta.x / 40) * 40;
-                    let newY = b.y + Math.round(event.delta.y / 40) * 40;
+                    const newX = b.x + Math.round(event.delta.x / grid) * grid;
+                    let newY = b.y + Math.round(event.delta.y / grid) * grid;
                     newY = Math.max(newY, 20);
 
                     if (isCollision(prevBlocks, newX, newY, id)) return b;
@@ -138,7 +154,7 @@ export default function NewTab() {
                 });
             });
         },
-        [setBlocks]
+        [setBlocks, grid]
     );
 
     return (
@@ -156,6 +172,7 @@ export default function NewTab() {
                                 id={block.id}
                                 x={block.x}
                                 y={block.y}
+                                grid={grid}
                             >
                                 <BlockComponent />
                             </DraggableBlock>
