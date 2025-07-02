@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { SettingGroup } from "./setters/SettingGroup";
 import { ChangeLocation } from "./setters/newTab/weather/change-location";
 
+
 export default function Settings() {
     const { setTheme } = useTheme();
     const { blocks, toggleBlock, addBlock, removeBlock, resetBlocks } =
@@ -66,6 +67,7 @@ export default function Settings() {
         const stored = localStorage.getItem("newTabFunIMGSType");
         return stored === "cat" || stored === "dog" ? stored : "dog";
     });
+    const [githubUsername, setGithubUsername] = useState(() => localStorage.getItem("githubUsername") || "");
 
     const handleToggle = (
         setValue: React.Dispatch<React.SetStateAction<boolean>>,
@@ -171,7 +173,22 @@ export default function Settings() {
                     setTheme={(theme: string) => setTheme(theme as any)}
                 />
             </div>
-
+            <div className="mt-4 flex-col flex justify-center items-center gap-1">
+                <h4 className="font-mono text-2xl mb-2 mt-5">GitHub Username</h4>
+                <input
+                    type="text"
+                    value={githubUsername}
+                    onChange={e => {
+                        setGithubUsername(e.target.value);
+                        localStorage.setItem("githubUsername", e.target.value);
+                        forceRerender();
+                    }}
+                    placeholder="Enter your GitHub username"
+                    className="bg-[#222] text-[#66ff66] border border-[#66ff66] rounded px-2 py-1 mb-2"
+                    style={{ minWidth: 200 }}
+                />
+            </div>
+            <div className="flex items-center gap-2"></div>
             <div className="mt-4 flex-col flex justify-center items-center gap-1">
                 <h4 className="font-mono text-2xl mb-2 mt-5">
                     New Tab Settings
@@ -426,11 +443,11 @@ export default function Settings() {
                         className="mt-2 text-xs underline"
                         onClick={resetBlocks}
                     >
-                        Przywróć domyślne bloki
+                        Bring back default block
                     </button>
                 </div>
             </div>
-            <div className="flex items-center gap-2"></div>
+            
         </div>
     );
 }

@@ -8,6 +8,9 @@ export default function Layout() {
                 <a href="/" className="hover:underline">
                     New Tab
                 </a>
+                <a href="/gitdash" className="hover:underline">
+                    GitDash
+                </a>
                 <a href="/settings" className="hover:underline">
                     Settings
                 </a>

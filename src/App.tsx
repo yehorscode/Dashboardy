@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import Layout from "./components/Layout";
 import NewTab from "./pages/NewTab/NewTab";
 import Settings from "./pages/Settings/Settings";
+import GitDash from "./pages/GitDash/GitDash";
 import { BlocksProvider } from "@/blocks-context";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                     }>
                         <Route index element={<NewTab />} />
                         <Route path="/settings" element={<Settings />} />
+                        <Route path="/gitdash" element={<GitDash />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
