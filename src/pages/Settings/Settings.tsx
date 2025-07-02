@@ -161,7 +161,7 @@ export default function Settings() {
     const forceRerender = () => setRerender((v) => v + 1);
 
     return (
-        <div className="h-screen p-10 bg-[282828] text-[#66ff66]">
+        <div className="h-screen p-10 bg-[#282828] text-[#66ff66]">
             <h1 className="font-mono text-4xl">Settings</h1>
             <div className="mt-4 flex-col flex justify-center items-center gap-1">
                 <h4 className="font-mono text-2xl mb-2">Site-Wide Settings</h4>

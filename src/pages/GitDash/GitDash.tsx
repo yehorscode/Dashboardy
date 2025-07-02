@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import GitHubCalendar from "react-github-calendar";
 import { toast } from "sonner";
-import TimeBlock from "@/components/Blocks/time-block";
 
 export default function GitDash() {
     const [githubUsername] = useState<string>(
