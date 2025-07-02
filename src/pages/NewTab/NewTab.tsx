@@ -85,7 +85,50 @@ export default function NewTab() {
         if (localStorage.getItem("newTabBlocks") === null) {
             localStorage.setItem(
                 "newTabBlocks",
-                '[\n {\n  "id": "block-1",\n  "type": "time",\n  "x": 860,\n  "y": 320,\n  "visible": true\n },\n {\n  "id": "block-2",\n  "type": "weather",\n  "x": 340,\n  "y": 120,\n  "visible": true\n },\n {\n  "id": "block-3",\n  "type": "calendar",\n  "x": 320,\n  "y": 480,\n  "visible": true\n },\n {\n  "id": "block-4",\n  "type": "tips",\n  "x": 1040,\n  "y": 680,\n  "visible": true\n }\n]'
+                JSON.stringify([
+                    {
+                        id: "block-1",
+                        type: "time",
+                        x: 540,
+                        y: 400,
+                        visible: true,
+                    },
+                    {
+                        id: "block-2",
+                        type: "weather",
+                        x: 200,
+                        y: 100,
+                        visible: true,
+                    },
+                    {
+                        id: "block-3",
+                        type: "calendar",
+                        x: 120,
+                        y: 540,
+                        visible: true,
+                    },
+                    {
+                        id: "block-4",
+                        type: "tips",
+                        x: 960,
+                        y: 720,
+                        visible: true,
+                    },
+                    {
+                        id: "block-5",
+                        type: "funimgs",
+                        x: 1240,
+                        y: 340,
+                        visible: true,
+                    },
+                    {
+                        id: "block-6",
+                        type: "uselessfact",
+                        x: 1180,
+                        y: 100,
+                        visible: true,
+                    },
+                ])
             );
             blocksJustSet = true;
         }
