@@ -22,6 +22,10 @@ export default function GitDash() {
         "Green like a carpet",
         "MORE SQUARES",
         "We need MORE!!!",
+        "Did you know tiles were green",
+        "Git is like a carpet",
+        "Do git, do git",
+        "Linus torvalds our god"
     ];
 
     function getTitle() {

@@ -26,4 +26,6 @@ Requirements:
 - Free space (~300MB)
 - Mind
 
-Note: Can't be accesed from kremlin (joke, but if you do remember i will know your ip, *vladimir vladimirovich krasnoe solneshko*)
+Note: Can't be accesed from kremlin (joke, but if you do remember i will know your ip, *vladimir vladimirovich krasnoe solneshko*, we will find you)
+
+i might sound weird here at the readme, but trust me im not
